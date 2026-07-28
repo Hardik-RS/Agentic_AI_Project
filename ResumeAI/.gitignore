@@ -1,0 +1,179 @@
+# =====================================================
+# Resume Analysis & Interview Preparation Agentic AI
+# Tech Stack:
+# Python | Django | LangChain | LangGraph
+# Gemini 2.5 Flash | SQLite | React | PyMuPDF
+# =====================================================
+
+############################
+# Python
+############################
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+*.pyo
+
+############################
+# Virtual Environment
+############################
+venv/
+env/
+ENV/
+.venv/
+
+############################
+# Environment Variables
+############################
+.env
+.env.*
+!.env.example
+
+############################
+# Django
+############################
+*.log
+db.sqlite3
+db.sqlite3-journal
+
+media/
+staticfiles/
+
+############################
+# Uploaded Files
+############################
+uploads/
+resumes/
+temp/
+tmp/
+
+############################
+# AI Generated Files
+############################
+generated/
+analysis/
+reports/
+interview_reports/
+
+############################
+# LangChain / LangGraph
+############################
+.langchain/
+.langgraph/
+checkpoints/
+memory/
+cache/
+
+############################
+# Model Cache
+############################
+models/
+huggingface/
+hf_cache/
+.cache/
+transformers_cache/
+
+############################
+# Vector Database
+############################
+faiss_index/
+vectorstore/
+vectordb/
+chroma_db/
+chromadb/
+*.faiss
+
+############################
+# Python Testing
+############################
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+
+############################
+# Jupyter
+############################
+.ipynb_checkpoints/
+
+############################
+# React
+############################
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/.vite/
+frontend/.cache/
+
+node_modules/
+build/
+dist/
+
+############################
+# npm
+############################
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+############################
+# VS Code
+############################
+.vscode/
+
+############################
+# PyCharm
+############################
+.idea/
+
+############################
+# Operating System
+############################
+.DS_Store
+Thumbs.db
+desktop.ini
+
+############################
+# Backup Files
+############################
+*.bak
+*.tmp
+*.swp
+*.swo
+
+############################
+# Logs
+############################
+logs/
+*.log
+
+############################
+# Secrets
+############################
+secrets/
+credentials.json
+service-account.json
+google_credentials.json
+
+############################
+# API Keys
+############################
+config/local.py
+config/dev.py
+
+############################
+# PDF Cache
+############################
+parsed_pdfs/
+pdf_cache/
+
+############################
+# Miscellaneous
+############################
+coverage.xml
+*.sqlite3
+*.db
+
