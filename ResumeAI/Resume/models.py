@@ -14,6 +14,8 @@ class Resume(models.Model):
 
     resume_file = models.FileField(upload_to="resumes/")
 
+    extracted_text = models.TextField(blank=True, null=True)
+
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Pending",)
