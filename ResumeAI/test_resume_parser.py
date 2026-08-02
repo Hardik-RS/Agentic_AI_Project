@@ -1,4 +1,7 @@
 from AI.Agents.ResumeParserAgent import ResumeParserAgent
+from AI.Agents.ResumeAnalysisAgent import ResumeAnalysisAgent
+from AI.Schemas.ResumeSchema import ResumeSchema
+
 
 sample_text = """
 hardiksarvaiya57@gmail.com
@@ -80,4 +83,12 @@ agent = ResumeParserAgent()
 
 resume = agent.run(sample_text)
 
-print(resume.model_dump())
+resume_data = resume.model_dump()
+
+data = ResumeSchema.model_validate(resume_data)
+
+agent = ResumeAnalysisAgent()
+
+result = agent.run(data)
+
+print(result.model_dump())
