@@ -84,6 +84,7 @@ agent = ResumeParserAgent()
 resume = agent.run(sample_text)
 
 resume_data = resume.model_dump()
+print(resume_data)
 
 data = ResumeSchema.model_validate(resume_data)
 

@@ -68,7 +68,7 @@ cache/
 ############################
 # Model Cache
 ############################
-models/
+#models/
 huggingface/
 hf_cache/
 .cache/

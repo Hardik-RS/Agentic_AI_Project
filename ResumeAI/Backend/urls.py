@@ -22,7 +22,9 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/auth/", include("Authentication.urls")),
-     path("api/resume/", include("Resume.urls")),
+    path("api/resume/", include("Resume.urls")),
+    path("api/ai/", include("AI.urls")),
+
 ]
 
 #temporary file when we add UI we will remove this code 
