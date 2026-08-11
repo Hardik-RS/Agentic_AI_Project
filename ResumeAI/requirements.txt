@@ -9,3 +9,4 @@ pytesseract
 google-genai 
 pydantic
 email-validator
+django-cors-headers
