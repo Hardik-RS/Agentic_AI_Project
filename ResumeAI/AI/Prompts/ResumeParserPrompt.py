@@ -50,7 +50,13 @@ Return exactly this JSON schema:
 
   "skills": [],
 
-  "certifications": []
+  "certifications": [
+    {{
+      "name": "",
+      "issuer": "",
+      "date": ""
+    }}
+  ]
 }}
 
 Resume Text:

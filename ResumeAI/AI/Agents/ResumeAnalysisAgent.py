@@ -1,20 +1,16 @@
-import logging
+from langchain_core.prompts import ChatPromptTemplate
 
-from pydantic import ValidationError
-
-from AI.Agents.BaseAgent import BaseAgent
+from AI.Services.GeminiService import GeminiService
 from AI.Prompts.ResumeAnalysisPrompt import RESUME_ANALYSIS_PROMPT
 from AI.Schemas.AnalysisSchema import AnalysisSchema
 from AI.Schemas.ResumeSchema import ResumeSchema
-from AI.Utils.jsonParser import parse_json
 
 
-logger = logging.getLogger(__name__)
-
-
-class ResumeAnalysisAgent(BaseAgent):
+class ResumeAnalysisAgent:
     """
-    Analyze a parsed resume and identify:
+    LangChain-based Resume Analysis Agent.
+
+    Analyzes a structured resume and identifies:
 
     - Strengths
     - Weaknesses
@@ -22,39 +18,55 @@ class ResumeAnalysisAgent(BaseAgent):
     - Improvement Areas
     """
 
-    def run(self, resume: ResumeSchema) -> AnalysisSchema:
+    def __init__(self):
 
-        if resume is None:
-            raise ValueError("Resume cannot be None.")
+        # Centralized Gemini configuration
+        self.gemini_service = GeminiService()
 
-        prompt = RESUME_ANALYSIS_PROMPT.format(
-            resume=resume.model_dump_json(indent=2)
+        # Tell Gemini/LangChain to return AnalysisSchema
+        self.llm = self.gemini_service.get_structured_llm(
+            AnalysisSchema
         )
 
-        try:
-            response = self.llm.generate(prompt)
+        # Create LangChain prompt
+        self.prompt = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    RESUME_ANALYSIS_PROMPT
+                ),
+                (
+                    "human",
+                    """
+                    Analyze the following structured resume.
 
-        except Exception as exc:
-            logger.exception("Gemini request failed.")
-            raise RuntimeError(
-                "Failed to generate resume analysis."
-            ) from exc
+                    Resume:
+                    {resume}
+                    """
+                ),
+            ]
+        )
 
-        try:
-            data = parse_json(response)
+        # Create LangChain chain
+        self.chain = self.prompt | self.llm
 
-        except Exception as exc:
-            logger.exception("Failed to parse Gemini JSON.")
+    def run(self,resume: ResumeSchema) -> AnalysisSchema:
+        """
+        Analyze a parsed resume and return a validated
+        AnalysisSchema object.
+        """
+
+        if resume is None:
             raise ValueError(
-                "Gemini returned invalid JSON."
-            ) from exc
+                "Resume cannot be None."
+            )
 
-        try:
-            return AnalysisSchema.model_validate(data)
+        result = self.chain.invoke(
+            {
+                "resume": resume.model_dump_json(
+                    indent=2
+                )
+            }
+        )
 
-        except ValidationError as exc:
-            logger.exception("Analysis validation failed.")
-
-            raise ValueError(
-                f"Invalid analysis returned by Gemini:\n{exc}"
-            ) from exc
+        return result

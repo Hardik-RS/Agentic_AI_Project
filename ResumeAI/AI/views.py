@@ -8,25 +8,29 @@ from rest_framework import status
 from Resume.models import Resume
 
 from AI.Models.ResumeParserResult import ResumeParserResult
-from AI.Agents.ResumeParserAgent import ResumeParserAgent
 from AI.Models.ResumeAnalysisResult import ResumeAnalysisResult
-from AI.Agents.ResumeAnalysisAgent import ResumeAnalysisAgent
-from AI.Schemas.ResumeSchema import ResumeSchema
 
-class ResumeParserView(APIView):
+from AI.Graphs.ResumeGraph import run_resume_graph
+
+
+class ResumeProcessView(APIView):
+
     permission_classes = [IsAuthenticated]
 
     def post(self, request, resume_id):
 
-        # Get uploaded resume
-        resume = get_object_or_404(
-            Resume,
-            id=resume_id,
-            user=request.user
-        )
+        # ----------------------------------
+        # Step 1: Get resume from database
+        # ----------------------------------
 
-        # Check extracted text exists
+        resume = get_object_or_404(Resume,id=resume_id,user=request.user)
+
+        # ----------------------------------
+        # Step 2: Check extracted text
+        # ----------------------------------
+
         if not resume.extracted_text:
+
             return Response(
                 {
                     "error": "Resume text not found."
@@ -34,79 +38,90 @@ class ResumeParserView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Run parser agent
-        parser = ResumeParserAgent()
+        # ----------------------------------
+        # Step 3: Run complete LangGraph
+        # ----------------------------------
 
-        parsed_resume = parser.run(
-            resume.extracted_text
-        )
-
-        # Save parser output
-        parser_result, created = ResumeParserResult.objects.update_or_create(
-            resume=resume,
-            defaults={
-                "parsed_data": parsed_resume.model_dump()
-            }
-        )
-
-        return Response(
-            {
-                "message": "Resume parsed successfully.",
-                "parser_result_id": parser_result.id,
-                "created": created,
-            },
-            status=status.HTTP_200_OK
-        )
-
-class ResumeAnalysisView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, resume_id):
-
-        # Step 1: Get resume
-        resume = get_object_or_404(
-            Resume,
-            id=resume_id,
-            user=request.user
-        )
-
-        # Step 2: Get parser result
         try:
-            parser_result = resume.parser_result
+            result = run_resume_graph(resume.extracted_text)
 
-        except ResumeParserResult.DoesNotExist:
+        except Exception as exc:
+
             return Response(
                 {
-                    "error": "Resume must be parsed before analysis."
+                    "error": "Resume AI processing failed.",
+                    "details": str(exc)
                 },
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-        # Step 3: Convert JSON to ResumeSchema
-        resume_schema = ResumeSchema.model_validate(
-            parser_result.parsed_data
+        # ----------------------------------
+        # Step 4: Get graph results
+        # ----------------------------------
+
+        parsed_resume = result.get("parsed_resume")
+
+        analysis = result.get("analysis")
+
+        if parsed_resume is None:
+
+            return Response(
+                {
+                    "error": "Resume parser did not return a result."
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        if analysis is None:
+
+            return Response(
+                {
+                    "error": "Resume analysis did not return a result."
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        # ----------------------------------
+        # Step 5: Save parser result
+        # ----------------------------------
+
+        parser_result, parser_created = (
+            ResumeParserResult.objects.update_or_create(
+                resume=resume,
+                defaults={
+                    "parsed_data": parsed_resume.model_dump()
+                }
+            )
         )
 
-        # Step 4: Run analysis agent
-        analysis_agent = ResumeAnalysisAgent()
+        # ----------------------------------
+        # Step 6: Save analysis result
+        # ----------------------------------
 
-        analysis = analysis_agent.run(
-            resume_schema
+        analysis_result, analysis_created = (
+            ResumeAnalysisResult.objects.update_or_create(
+                resume=resume,
+                defaults={
+                    "analysis_data": analysis.model_dump()
+                }
+            )
         )
 
-        # Step 5: Save analysis result
-        analysis_result, created = ResumeAnalysisResult.objects.update_or_create(
-            resume=resume,
-            defaults={
-                "analysis_data": analysis.model_dump()
-            }
-        )
+        # ----------------------------------
+        # Step 7: Return response
+        # ----------------------------------
 
         return Response(
             {
-                "message": "Resume analyzed successfully.",
+                "message": "Resume processed successfully.",
+
+                "parser_result_id": parser_result.id,
+
                 "analysis_result_id": analysis_result.id,
-                "created": created,
+
+                "parser_created": parser_created,
+
+                "analysis_created": analysis_created,
             },
             status=status.HTTP_200_OK
         )

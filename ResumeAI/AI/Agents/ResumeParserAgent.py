@@ -1,33 +1,58 @@
-from pydantic import ValidationError
+from langchain_core.prompts import ChatPromptTemplate
 
-from AI.Agents.BaseAgent import BaseAgent
+from AI.Services.GeminiService import GeminiService
 from AI.Prompts.ResumeParserPrompt import RESUME_PARSER_PROMPT
 from AI.Schemas.ResumeSchema import ResumeSchema
-from AI.Utils.jsonParser import parse_json
 
 
-class ResumeParserAgent(BaseAgent):
+class ResumeParserAgent:
     """
-    AI agent responsible for converting raw resume text
-    into structured resume data.
+    LangChain-based AI agent responsible for converting
+    raw resume text into structured ResumeSchema data.
     """
 
-    def run(self, resume_text: str) -> ResumeSchema:
-        # Build the prompt
-        prompt = RESUME_PARSER_PROMPT.format(
-            resume_text=resume_text
+    def __init__(self):
+
+        # Get the centralized Gemini service
+        self.gemini_service = GeminiService()
+
+        # Configure Gemini to return ResumeSchema directly
+        self.llm = self.gemini_service.get_structured_llm(
+            ResumeSchema
         )
 
-        # Call Gemini
-        response = self.llm.generate(prompt)
+        # Build LangChain prompt
+        self.prompt = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    RESUME_PARSER_PROMPT
+                ),
+                (
+                    "human",
+                    """
+                    Parse the following resume text.
 
-        # Parse JSON
-        data = parse_json(response)
+                    Resume Text:
+                    {resume_text}
+                    """
+                )
+            ]
+        )
 
-        # Validate with Pydantic
-        try:
-            resume = ResumeSchema.model_validate(data)
-        except ValidationError as exc:
-            raise ValueError(f"Invalid resume data returned by Gemini:\n{exc}") from exc
+        # Create LangChain runnable chain
+        self.chain = self.prompt | self.llm
 
-        return resume
+    def run(self, resume_text: str) -> ResumeSchema:
+        """
+        Parse raw resume text and return a validated
+        ResumeSchema object.
+        """
+
+        result = self.chain.invoke(
+            {
+                "resume_text": resume_text
+            }
+        )
+
+        return result

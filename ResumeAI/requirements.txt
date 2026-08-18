@@ -10,3 +10,6 @@ google-genai
 pydantic
 email-validator
 django-cors-headers
+langgraph
+langchain 
+langchain-google-genai
