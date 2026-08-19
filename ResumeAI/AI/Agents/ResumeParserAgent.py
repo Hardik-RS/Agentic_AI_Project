@@ -17,9 +17,7 @@ class ResumeParserAgent:
         self.gemini_service = GeminiService()
 
         # Configure Gemini to return ResumeSchema directly
-        self.llm = self.gemini_service.get_structured_llm(
-            ResumeSchema
-        )
+        self.llm = self.gemini_service.get_structured_llm(ResumeSchema)
 
         # Build LangChain prompt
         self.prompt = ChatPromptTemplate.from_messages(
