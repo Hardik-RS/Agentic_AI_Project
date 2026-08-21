@@ -42,6 +42,12 @@ class ResumeUploadView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            # Remove NUL characters from extracted PDF/OCR text
+            text = text.replace("\x00", "")
+
+            # Normalize line endings
+            text = text.replace("\r\n", "\n").replace("\r", "\n")
+
             resume.extracted_text = text
             resume.status = "Completed"
             resume.save()
