@@ -3,6 +3,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from AI.Models.JobMatchResult import JobMatchResult
+from AI.Models.MockInterview import MockInterview
+from Resume.models import Resume
 from .serializers import ResumeUploadSerializer
 from .Utils.pdfExtractor import extract_text_from_pdf
 
@@ -74,3 +77,62 @@ class ResumeUploadView(APIView):
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class ResumeDashboardView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        resumes = list(
+            Resume.objects.filter(user=request.user).order_by("-uploaded_at")
+        )
+        resume_items = []
+        analysis_count = 0
+
+        for resume in resumes:
+            analysis_result = getattr(resume, "analysis_result", None)
+            score_result = getattr(resume, "score_result", None)
+            if analysis_result is not None:
+                analysis_count += 1
+
+            resume_items.append(
+                {
+                    "id": resume.id,
+                    "file_name": resume.resume_file.name.rsplit("/", 1)[-1],
+                    "status": resume.status,
+                    "uploaded_at": resume.uploaded_at,
+                    "analysis_date": (
+                        analysis_result.updated_at
+                        if analysis_result is not None
+                        else None
+                    ),
+                    "analysis_result": (
+                        analysis_result.analysis_data
+                        if analysis_result is not None
+                        else None
+                    ),
+                    "score_result": (
+                        score_result.score_data
+                        if score_result is not None
+                        else None
+                    ),
+                }
+            )
+
+        return Response(
+            {
+                "counts": {
+                    "resumes": len(resumes),
+                    "analyses": analysis_count,
+                    "job_matches": JobMatchResult.objects.filter(
+                        resume__user=request.user
+                    ).count(),
+                    "mock_interviews": MockInterview.objects.filter(
+                        user=request.user,
+                        resume__user=request.user,
+                    ).count(),
+                },
+                "resumes": resume_items,
+            },
+            status=status.HTTP_200_OK,
+        )

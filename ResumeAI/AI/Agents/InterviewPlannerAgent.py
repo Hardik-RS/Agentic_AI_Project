@@ -88,7 +88,7 @@ class InterviewPlannerAgent:
             )
 
         try:
-            token_counter = TokenCounter(agent_name="JobMatchingAgent")
+            token_counter = TokenCounter(agent_name="interview_planner_agent")
 
             result = self.chain.invoke(
                 {

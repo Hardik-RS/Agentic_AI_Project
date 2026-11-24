@@ -33,6 +33,8 @@ class InterviewPlanResult(models.Model):
 
     def __str__(self):
         return (
+            f"ID - "
+            f"{self.id}-"
             f"Interview Plan - "
             f"{self.resume.id} - "
             f"{self.job_match.job_title}"

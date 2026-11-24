@@ -78,9 +78,7 @@ Possible question categories:
 - Skill Gap
 - Job Specific
 
---------------------------------------------------
 PERSONALIZATION RULES
---------------------------------------------------
 
 Questions must be based on the candidate's actual:
 
@@ -104,9 +102,7 @@ Include resume-specific and project-specific questions.
 
 Do not invent candidate experience.
 
---------------------------------------------------
 OUTPUT RULE
---------------------------------------------------
 
 Return ONLY structured data matching the provided schema.
 

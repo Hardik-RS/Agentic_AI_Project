@@ -36,7 +36,7 @@ class JobMatchingAgent:
                     """
                     Analyze the candidate against the supplied job description.
                     """
-                ),
+                )
             ]
         )
 

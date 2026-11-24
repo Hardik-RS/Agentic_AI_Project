@@ -80,13 +80,24 @@ class JobMatchingService:
                 "Job matching agent returned no result."
             )
 
+        match_data = match_result.model_dump()
+        overall_score = match_data.get("overall_match_score")
+        if (
+            not isinstance(overall_score, int)
+            or isinstance(overall_score, bool)
+            or not 0 <= overall_score <= 100
+        ):
+            raise RuntimeError(
+                "Job matching agent returned an invalid overall match score."
+            )
+
         # Save result
 
         saved_result = JobMatchResult.objects.create(
             resume=resume,
             job_title=job_title,
             job_description=(job_description.strip() if job_description else ""),
-            match_data=match_result.model_dump(),
+            match_data=match_data,
         )
 
         return saved_result
