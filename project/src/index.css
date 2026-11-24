@@ -1,0 +1,306 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --forest: #243B35;
+  --sage: #6B8E7B;
+  --soft-sage: #B7C9B1;
+  --ivory: #F1E9D2;
+  --forest-deep: #182923;
+  --body-text: #E5EBDD;
+  --improvement-text: #F1D5A8;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-slate-50 text-navy-900 font-sans antialiased;
+    background-color: var(--ivory);
+  }
+  * {
+    @apply border-slate-200;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-200 disabled:opacity-100 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2;
+  }
+  .btn-primary {
+    @apply btn bg-brand-600 text-white hover:bg-brand-700 shadow-soft hover:shadow-card;
+  }
+  .btn-primary:disabled {
+    background-color: var(--soft-sage);
+    color: var(--forest);
+  }
+  .btn-secondary {
+    @apply btn bg-white text-navy-700 border border-slate-200 hover:border-brand-300 hover:text-brand-600 shadow-soft;
+  }
+  .btn-secondary:disabled {
+    background-color: #ebe4cf;
+    border-color: #c9c1aa;
+    color: #46584e;
+  }
+  .btn-ghost {
+    @apply btn text-navy-600 hover:bg-slate-100;
+  }
+  .btn-ghost:disabled {
+    color: #567665;
+  }
+  .btn-danger {
+    @apply btn bg-error-500 text-white hover:bg-error-600;
+  }
+  .card {
+    @apply bg-white rounded-xl border border-slate-200 shadow-soft;
+  }
+  .card-elevated {
+    @apply bg-white rounded-xl border border-slate-200 shadow-card;
+  }
+  .input {
+    @apply w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-navy-900 placeholder-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none transition-all;
+  }
+  .label {
+    @apply block text-sm font-medium text-navy-700 mb-1.5;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium;
+  }
+}
+
+/* Keep secondary copy readable without changing the Sage Serenity surfaces. */
+.text-navy-300 {
+  color: #6B8E7B;
+}
+
+.text-navy-400,
+.text-slate-400 {
+  color: #567665;
+}
+
+.text-navy-500,
+.text-slate-500 {
+  color: #46584e;
+}
+
+.input::placeholder,
+textarea::placeholder {
+  color: #567665;
+  opacity: 1;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: var(--forest-deep);
+  color: var(--ivory);
+}
+
+.dark .bg-white {
+  background-color: #2b443a;
+}
+
+.dark .bg-slate-50 {
+  background-color: #1b3028;
+}
+
+.dark .bg-slate-100 {
+  background-color: #344f42;
+}
+
+.dark .bg-slate-200 {
+  background-color: #466455;
+}
+
+.dark .bg-brand-50 {
+  background-color: rgba(183, 201, 177, 0.14);
+}
+
+.dark .bg-brand-100 {
+  background-color: rgba(183, 201, 177, 0.22);
+}
+
+.dark .bg-success-50 {
+  background-color: rgba(107, 142, 123, 0.18);
+}
+
+.dark .bg-warning-50 {
+  background-color: rgba(241, 233, 210, 0.15);
+}
+
+.dark .bg-error-50 {
+  background-color: rgba(239, 68, 68, 0.14);
+}
+
+.dark .text-navy-900,
+.dark .text-navy-800 {
+  color: var(--ivory);
+}
+
+.dark .text-navy-700,
+.dark .text-navy-600 {
+  color: #d7e1d3;
+}
+
+.dark .text-navy-500,
+.dark .text-navy-400 {
+  color: #b7c9b1;
+}
+
+.dark .text-navy-300 {
+  color: #d7e1d3;
+}
+
+.dark .text-brand-400,
+.dark .text-brand-500,
+.dark .text-brand-600,
+.dark .text-brand-700,
+.dark .text-brand-900,
+.dark .text-accent-500,
+.dark .text-accent-600,
+.dark .text-accent-700,
+.dark .text-success-500,
+.dark .text-success-600,
+.dark .text-success-700 {
+  color: #b7c9b1;
+}
+
+.dark .text-warning-500,
+.dark .text-warning-600,
+.dark .text-warning-700 {
+  color: #f1d5a8;
+}
+
+.dark .text-error-500,
+.dark .text-error-600,
+.dark .text-error-700 {
+  color: #fca5a5;
+}
+
+.dark .text-slate-700,
+.dark .text-slate-600 {
+  color: #cbd5e1;
+}
+
+.dark .text-slate-500 {
+  color: #b7c9b1;
+}
+
+.dark .border-slate-200,
+.dark .border-slate-100,
+.dark .border-slate-300 {
+  border-color: #466455;
+}
+
+.dark .border-brand-200 {
+  border-color: rgba(183, 201, 177, 0.45);
+}
+
+.dark .card,
+.dark .card-elevated {
+  border-color: #466455;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+}
+
+.dark .btn-secondary {
+  background-color: #2b443a;
+  border-color: #466455;
+  color: var(--ivory);
+}
+
+.dark .btn-secondary:hover {
+  border-color: var(--soft-sage);
+  color: var(--ivory);
+  background-color: #344f42;
+}
+
+.dark .btn-ghost {
+  color: #d7e1d3;
+}
+
+.dark .btn-ghost:hover {
+  background-color: #344f42;
+}
+
+.dark .input,
+.dark select,
+.dark textarea {
+  background-color: #2b443a;
+  border-color: #466455;
+  color: var(--ivory);
+}
+
+.dark .input::placeholder,
+.dark textarea::placeholder {
+  color: var(--soft-sage);
+}
+
+.dark .text-slate-400 {
+  color: #b7c9b1;
+}
+
+.dark .text-slate-500 {
+  color: #b7c9b1;
+}
+
+.dark .input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  border-color: var(--soft-sage);
+  box-shadow: 0 0 0 3px rgba(183, 201, 177, 0.2);
+}
+
+.dark .hover\:bg-slate-50:hover {
+  background-color: #344f42;
+}
+
+.dark .hover\:bg-slate-100:hover {
+  background-color: #344f42;
+}
+
+.dark .hover\:bg-slate-200:hover {
+  background-color: #466455;
+}
+
+.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #466455;
+}
+
+.dark .shadow-soft,
+.dark .shadow-card,
+.dark .shadow-elevated {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+}
+
+@layer utilities {
+  .shimmer-bg {
+    background: linear-gradient(90deg, #F1E9D2 25%, #B7C9B1 50%, #F1E9D2 75%);
+    background-size: 200% 100%;
+    @apply animate-shimmer;
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #B7C9B1 transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #B7C9B1;
+    border-radius: 3px;
+  }
+}
+
+/* Custom radial progress */
+.radial-progress {
+  transform: rotate(-90deg);
+}
+.radial-progress circle {
+  transition: stroke-dashoffset 0.8s ease-out;
+}
